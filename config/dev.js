@@ -9,7 +9,9 @@
     clientSecret: '46a76282f671022301ec347f2ca4411dfcc7fcee'
   },
   mongoUri:
-  'mongodb+srv://rp:vinny007@auth-dev-xtbqx.mongodb.net/test?retryWrites=true&w=majority'
+  'mongodb+srv://rp:vinny007@auth-dev-xtbqx.mongodb.net/test?retryWrites=true&w=majority',
+  jwtSecret: 'asdfghjkl',
+  cookieKey: 'asdfqwerpoiulkjh'
 }
 
 module.exports = keys;

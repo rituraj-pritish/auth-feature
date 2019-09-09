@@ -1,26 +1,41 @@
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const chalk = require('chalk');
-// const bcrypt = 
+const bcrypt = require('bcryptjs');
 
 const User = require('../models/user');
 
-passport.use(new LocalStrategy(async (email,password,done) => {
-  try {
-    await User.findOne({
-      email: email
-    }, (err, user) => {
-      if(err) return done(err);
+passport.use(
+  new LocalStrategy({
+    usernameField: 'email',
+    passwordField: 'password'
+  },async (email, password) => {
+    try {
+      const user = await User.findOne({
+        email: email
+      });
+      console.log(chalk.red('local'));
+      console.log(chalk.red(user));
 
-      if(!user) return done(null,false);
-
-      if(user.password !== passport) {
-        return done(null, false)
+      if (!user) {
+        return res.status(400).json({
+          errors: [{ msg: 'Invalid credentials' }]
+        });
       }
+
+      //password match check
+      const isMatch = await bcrypt.compare(password, user.password);
+
+      if (!isMatch) {
+        return res.status(400).json({
+          errors: [{ msg: 'Invalid credentials' }]
+        });
+      }
+
       console.log(chalk.green('success'));
-      return done(null,user)
-    });
-  } catch (error) {
-    console.log(chalk.red(error.message));
-  }
-}))
+      return  user;
+    } catch (error) {
+      console.log(chalk.red(error.message));
+    }
+  })
+);
